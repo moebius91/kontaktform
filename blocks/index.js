@@ -1,7 +1,7 @@
 ( function( blocks, element ) {
     var el = element.createElement;
-    blocks.registerBlockType( 'simple-form/block', {
-        title: 'Simple Form',
+    blocks.registerBlockType( 'kontaktform/block', {
+        title: 'KontaktForm',
         icon: 'feedback',
         category: 'widgets',
         edit: function() {

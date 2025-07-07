@@ -1,5 +1,5 @@
 <?php
-namespace SimpleFormPlugin;
+namespace KontaktForm;
 
 class Plugin {
     private static $instance;
@@ -15,13 +15,13 @@ class Plugin {
 
     private function __construct() {
         global $wpdb;
-        $this->table_name = $wpdb->prefix . 'simple_form_messages';
+        $this->table_name = $wpdb->prefix . 'kontaktform_messages';
 
         register_activation_hook( __FILE__, array( $this, 'activate' ) );
         add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
-        add_shortcode( 'simple_form', array( $this, 'render_form_shortcode' ) );
-        add_action( 'admin_post_nopriv_simple_form_submit', array( $this, 'handle_form_submit' ) );
-        add_action( 'admin_post_simple_form_submit', array( $this, 'handle_form_submit' ) );
+        add_shortcode( 'kontaktform', array( $this, 'render_form_shortcode' ) );
+        add_action( 'admin_post_nopriv_kontaktform_submit', array( $this, 'handle_form_submit' ) );
+        add_action( 'admin_post_kontaktform_submit', array( $this, 'handle_form_submit' ) );
         add_action( 'init', array( $this, 'register_block' ) );
     }
 
@@ -38,15 +38,15 @@ class Plugin {
         ) $charset_collate;";
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
-        add_option( 'simple_form_db_version', $this->db_version );
+        add_option( 'kontaktform_db_version', $this->db_version );
     }
 
     public function register_admin_menu() {
-        add_menu_page( 'Simple Forms', 'Simple Forms', 'manage_options', 'simple-form-plugin', array( $this, 'settings_page' ) );
+        add_menu_page( 'KontaktForm', 'KontaktForm', 'manage_options', 'kontaktform', array( $this, 'settings_page' ) );
     }
 
     public function settings_page() {
-        echo '<div class="wrap"><h1>Simple Form Plugin</h1><p>Formularverwaltung folgt.</p></div>';
+        echo '<div class="wrap"><h1>KontaktForm</h1><p>Formularverwaltung folgt.</p></div>';
     }
 
     public function render_form_shortcode( $atts ) {
@@ -57,7 +57,7 @@ class Plugin {
     }
 
     public function handle_form_submit() {
-        if ( ! isset( $_POST['simple_form_nonce'] ) || ! wp_verify_nonce( $_POST['simple_form_nonce'], 'simple_form_submit' ) ) {
+        if ( ! isset( $_POST['kontaktform_nonce'] ) || ! wp_verify_nonce( $_POST['kontaktform_nonce'], 'kontaktform_submit' ) ) {
             wp_die( 'Nonce check failed' );
         }
         global $wpdb;
@@ -86,13 +86,13 @@ class Plugin {
         if ( ! function_exists( 'register_block_type' ) ) {
             return;
         }
-        wp_register_script( 'simple-form-block', plugins_url( '../blocks/index.js', __FILE__ ), array( 'wp-blocks', 'wp-element', 'wp-editor' ), '1.0', true );
-        wp_register_style( 'simple-form-block-editor', plugins_url( '../blocks/editor.css', __FILE__ ), array( 'wp-edit-blocks' ) );
-        wp_register_style( 'simple-form-block', plugins_url( '../blocks/style.css', __FILE__ ), array() );
-        register_block_type( 'simple-form/block', array(
-            'editor_script' => 'simple-form-block',
-            'editor_style'  => 'simple-form-block-editor',
-            'style'         => 'simple-form-block',
+        wp_register_script( 'kontaktform-block', plugins_url( '../blocks/index.js', __FILE__ ), array( 'wp-blocks', 'wp-element', 'wp-editor' ), '1.0', true );
+        wp_register_style( 'kontaktform-block-editor', plugins_url( '../blocks/editor.css', __FILE__ ), array( 'wp-edit-blocks' ) );
+        wp_register_style( 'kontaktform-block', plugins_url( '../blocks/style.css', __FILE__ ), array() );
+        register_block_type( 'kontaktform/block', array(
+            'editor_script' => 'kontaktform-block',
+            'editor_style'  => 'kontaktform-block-editor',
+            'style'         => 'kontaktform-block',
             'render_callback' => array( $this, 'render_form_block' ),
         ) );
     }
